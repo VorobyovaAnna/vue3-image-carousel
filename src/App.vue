@@ -1,47 +1,42 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <div>
+    <Carousel :autoplay="true" :loop="true">
+      <Slide v-for="image in images" :key="image.id">
+        <img :src="image.download_url" :alt="image.author" style="width: 100%; height: 100%;">
+      </Slide>
+    </Carousel>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-}
+<script>
+import Carousel from "./components/ImageCarousel.vue";
+import Slide from "./components/SlideItem.vue";
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+export default {
+  components: { Carousel, Slide },
+  data() {
+    return {
+      images: [],
+    };
+  },
+  created() {
+    this.fetchImages();
+  },
+  methods: {
+    async fetchImages() {
+      try {
+        const response = await fetch('https://picsum.photos/v2/list');
+        const data = await response.json();
+        this.images = data;
+      } catch (error) {
+        console.error('Error fetching images: ', error);
+      }
+    },
+  },
+};
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+</script>
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+<style>
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>
